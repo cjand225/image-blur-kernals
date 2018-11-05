@@ -1,5 +1,7 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,7 +51,7 @@ public class ImageProcess {
   }
 
   private void initImage(){
-    iCanvas = new ImageComponent(iFrame.getWidth(), iFrame.getHeight());
+    iCanvas = new ImageComponent();
   }
 
   private void initControlPanel(){
@@ -59,10 +61,9 @@ public class ImageProcess {
   private void addComponentsToFrame(){
 
     iFrame.add(iCanvas, BorderLayout.CENTER);
-    iFrame.add(cPanel, BorderLayout.SOUTH);
+    iFrame.add(cPanel, BorderLayout.PAGE_END);
 
-    iFrame.setSize(new Dimension(1000, 1000));
-    iCanvas.setSize(new Dimension(iFrame.getWidth() - 30, iFrame.getHeight() - 30));
+
     cPanel.setSize(new Dimension(iFrame.getWidth(), 100));
 
     iFrame.pack();
@@ -84,6 +85,7 @@ public class ImageProcess {
 
           iCanvas.setImage(image);
           iCanvas.showImage();
+          iFrame.pack();
         }
       }
     }
@@ -93,11 +95,15 @@ public class ImageProcess {
     cPanel.getApplyButton().addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-
         iCanvas.setKernel(cPanel.getBlurAmount());
         iCanvas.BlurImage();
-        iCanvas.showImage();
+      }
+    });
 
+    cPanel.getResetButton().addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        iCanvas.revert();
       }
     });
 

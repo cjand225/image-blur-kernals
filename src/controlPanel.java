@@ -2,6 +2,8 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class controlPanel extends JPanel {
 
@@ -24,7 +26,7 @@ public class controlPanel extends JPanel {
 
   private JLabel sLabel;
   private JFileChooser fChooser;
-
+  private GridBagConstraints gridCons;
 
   private double blurAmount = 2.0;
 
@@ -38,7 +40,6 @@ public class controlPanel extends JPanel {
     initPanel();
     initButton();
     initSlider();
-    initFileChooser();
     addComps();
 
   }
@@ -46,7 +47,7 @@ public class controlPanel extends JPanel {
 
   private void initPanel(){
     setLayout(new BorderLayout());
-    setPreferredSize(new Dimension(1000,100));
+    setPreferredSize(new Dimension(700,100));
   }
 
   private void initButton(){
@@ -58,14 +59,23 @@ public class controlPanel extends JPanel {
     qButton = new JButton(QBUTTON_TEXT);
     oButton = new JButton(OBUTTON_TEXT);
 
+    fChooser = new JFileChooser();
+
     buttonPanel.setPreferredSize(new Dimension(this.getWidth(), 30));
+
+    qButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        System.exit(0);
+      }
+    });
   }
 
   private void initSlider(){
     sliderPanel = new JPanel();
     sliderPanel.setLayout(new GridLayout(2, 1));
 
-    sLabel = new JLabel(SLABEL_TEXT + "2.0");
+    sLabel = new JLabel(SLABEL_TEXT + blurAmount);
     bSlider = new JSlider(JSlider.HORIZONTAL, 1, 5, 3);
 
     bSlider.setMajorTickSpacing(1);
@@ -86,9 +96,7 @@ public class controlPanel extends JPanel {
     return oButton;
   }
 
-  private void initFileChooser(){
-    fChooser = new JFileChooser();
-  }
+
 
   private void addComps(){
 
@@ -112,6 +120,7 @@ public class controlPanel extends JPanel {
 
   }
 
+
   public JButton getApplyButton(){
     return bButton;
   }
@@ -126,7 +135,6 @@ public class controlPanel extends JPanel {
 
 
   public double getBlurAmount() {
-    System.out.print(blurAmount);
     return blurAmount;
   }
 

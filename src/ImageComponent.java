@@ -53,22 +53,18 @@ public class ImageComponent extends JLabel {
   private int height;
   private int width;
 
-  public ImageComponent(int width, int height){
+  public ImageComponent(){
     super();
-    setDefaultSize(width, height);
+
+
   }
 
   public ImageComponent(BufferedImage img) {
     super();
-    setDefaultSize(width, height);
     bim = img;
     filteredBim = new BufferedImage(bim.getWidth(), bim.getHeight(), BufferedImage.TYPE_INT_RGB);
     setPreferredSize(new Dimension(bim.getWidth(), bim.getHeight()));
     this.repaint();
-  }
-
-  public void setDefaultSize(int height, int width){
-    setSize(new Dimension(height, width));
   }
 
   public void setKernel(double index) {
@@ -98,6 +94,11 @@ public class ImageComponent extends JLabel {
     this.repaint();
   }
 
+  public void revert(){
+    showFiltered = false;
+    this.repaint();
+  }
+
   public BufferedImage getImage() {
     return bim;
   }
@@ -118,7 +119,7 @@ public class ImageComponent extends JLabel {
 
   public void BlurImage() {
     if (bim == null) return;
-    Kernel kernel = new Kernel(5, 5, getKernel());
+    Kernel kernel = new Kernel(5, 5, kernelChoice);
     ConvolveOp cop = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
 
     // make a copy of the buffered image
@@ -129,6 +130,8 @@ public class ImageComponent extends JLabel {
     // apply the filter the copied image
     // result goes to a filtered copy
     cop.filter(newbim, filteredBim);
+
+
     showFiltered = true;
     this.repaint();
   }
