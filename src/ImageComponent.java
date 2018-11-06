@@ -53,11 +53,27 @@ public class ImageComponent extends JLabel {
   private int height;
   private int width;
 
+    /*
+
+    Function: ImageComponent()
+    Purpose: Blank constructor for the ImageComponent class
+
+  */
+
   public ImageComponent(){
     super();
 
 
   }
+
+    /*
+
+    Function: ImageComponent(BufferedImage img)
+    Purpose: Constructor of the Image component class that takes a buffered image, adds a second bufferedImage
+            for usage during filtering, sets the preferred size based on the dimension of img, and then repaints
+            itself to show to user on screen.
+
+  */
 
   public ImageComponent(BufferedImage img) {
     super();
@@ -66,6 +82,15 @@ public class ImageComponent extends JLabel {
     setPreferredSize(new Dimension(bim.getWidth(), bim.getHeight()));
     this.repaint();
   }
+
+    /*
+
+    Function: setKernel(double index)
+    Purpose: Takes a double integer, determines if its one of the numbers corresponding with
+            the hardcoded lists, then it'll set the list as the one to apply the filter to, otherwise
+            it'll stay with the last chosen or default chosen.
+
+  */
 
   public void setKernel(double index) {
     if (index == 1.0) {
@@ -81,9 +106,24 @@ public class ImageComponent extends JLabel {
     }
   }
 
+    /*
+
+    Function: getKernel()
+    Purpose: returns current kernel list from var kernelChoice
+
+  */
+
   public float[] getKernel(){
     return kernelChoice;
   }
+
+
+    /*
+
+    Function: setImage(BufferedImage img)
+    Purpose: sets whatever bufferedImage given with img and paints to the Jlabel, similar to constructor
+
+  */
 
   public void setImage(BufferedImage img) {
     if (img == null) return;
@@ -94,20 +134,56 @@ public class ImageComponent extends JLabel {
     this.repaint();
   }
 
+
+    /*
+
+    Function: revert()
+    Purpose: toggles boolean relating to image swapping so the user can view the unedited image.
+
+  */
+
   public void revert(){
     showFiltered = false;
     this.repaint();
   }
 
+
+    /*
+
+    Function: getImage()
+    Purpose: returns the original bufferedImage that is currently in use.
+
+  */
+
   public BufferedImage getImage() {
     return bim;
   }
+
+
+  public BufferedImage getFilteredImg(){ return filteredBim; }
+
+  public boolean getFiltered(){ return showFiltered; }
+
+
+    /*
+
+    Function: showImage()
+    Purpose: shows original image and repaints the current ImageComponent
+
+  */
 
   public void showImage() {
     if (bim == null) return;
     showFiltered = false;
     this.repaint();
   }
+
+    /*
+
+    Function: paintComponent(Graphics g)
+    Purpose: overrides the paint component to show either the filtered BufferImage or BufferedImage
+
+  */
 
   public void paintComponent(Graphics g) {
     Graphics2D big = (Graphics2D) g;
@@ -116,6 +192,15 @@ public class ImageComponent extends JLabel {
     else
       big.drawImage(bim, 0, 0, this);
   }
+
+
+    /*
+
+    Function: BlurImage()
+    Purpose: Applies a kernel chosen by the user and applies the convolution to the bufferedImage, drawing it as a
+            new buffered image, and copying that bufferedImage to the filteredBim
+
+  */
 
   public void BlurImage() {
     if (bim == null) return;
@@ -131,9 +216,27 @@ public class ImageComponent extends JLabel {
     // result goes to a filtered copy
     cop.filter(newbim, filteredBim);
 
-
     showFiltered = true;
     this.repaint();
   }
+
+  public void resizetoCanvas(BufferedImage img, int newW, int newH) {
+    Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
+    BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+
+    Graphics2D g2d = dimg.createGraphics();
+    g2d.drawImage(tmp, 0, 0, null);
+    g2d.dispose();
+
+    if(showFiltered){
+      filteredBim = dimg;
+    }else {
+      bim = dimg;
+    }
+
+    this.repaint();
+  }
+
+
 
 }
