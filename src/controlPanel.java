@@ -18,11 +18,8 @@ public class controlPanel extends JPanel {
   private static int MIN_VALUE = 1;
   private static int DEFAULT_VALUE = 3;
 
-  private JPanel buttonPanel;
-  private JPanel sliderPanel;
-
   private JSlider bSlider;
-  private JButton bButton;
+  private JButton aButton;
   private JButton rButton;
   private JButton qButton;
   private JButton oButton;
@@ -65,8 +62,7 @@ public class controlPanel extends JPanel {
 
    */
   private void initPanel(){
-    setLayout(new BorderLayout());
-    setPreferredSize(new Dimension(700,100));
+    setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
   }
 
   /*
@@ -75,10 +71,8 @@ public class controlPanel extends JPanel {
 
  */
   private void initButton(){
-    buttonPanel = new JPanel();
-    buttonPanel.setLayout(new GridLayout(1, 4, 100, 0));
 
-    bButton = new JButton(BBUTTON_TEXT);
+    aButton = new JButton(BBUTTON_TEXT);
     rButton = new JButton(RBUTTON_TEXT);
     qButton = new JButton(QBUTTON_TEXT);
     oButton = new JButton(OBUTTON_TEXT);
@@ -97,9 +91,6 @@ public class controlPanel extends JPanel {
 
  */
   private void initSlider(){
-    sliderPanel = new JPanel();
-    sliderPanel.setLayout(new GridLayout(2, 1 ));
-
     sLabel = new JLabel(SLIDER_LABEL_TEXT + blurAmount);
     bSlider = new JSlider(JSlider.HORIZONTAL, MIN_VALUE, MAX_VALUE, DEFAULT_VALUE);
 
@@ -113,10 +104,11 @@ public class controlPanel extends JPanel {
       }
     });
 
-    sliderPanel.setPreferredSize(new Dimension(this.getWidth(), 50));
+    bSlider.setPreferredSize(new Dimension(20,20));
+
+
+
   }
-
-
 
   /*
   Function: addComps()
@@ -125,17 +117,15 @@ public class controlPanel extends JPanel {
  */
   private void addComps(){
 
-    sliderPanel.add(sLabel);
-    sliderPanel.add(bSlider);
+    add(sLabel);
+    add(Box.createRigidArea(new Dimension(50,0)));
+    add(bSlider);
 
-    buttonPanel.add(qButton);
-    buttonPanel.add(oButton);
-    buttonPanel.add(bButton);
-    buttonPanel.add(rButton);
-
-    add(sliderPanel, BorderLayout.NORTH);
-    add(buttonPanel, BorderLayout.SOUTH);
-
+    add(Box.createRigidArea(new Dimension(50,0)));
+    add(aButton);
+    add(rButton);
+    add(oButton);
+    add(qButton);
 
   }
 
@@ -155,7 +145,7 @@ public class controlPanel extends JPanel {
 
  */
   public JButton getApplyButton(){
-    return bButton;
+    return aButton;
   }
 
   /*

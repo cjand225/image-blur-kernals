@@ -50,9 +50,6 @@ public class ImageComponent extends JLabel {
   private boolean showFiltered = false;
   private float[] kernelChoice = null;
 
-  private int height;
-  private int width;
-
     /*
 
     Function: ImageComponent()
@@ -137,36 +134,6 @@ public class ImageComponent extends JLabel {
 
     /*
 
-    Function: revert()
-    Purpose: toggles boolean relating to image swapping so the user can view the unedited image.
-
-  */
-
-  public void revert(){
-    showFiltered = false;
-    this.repaint();
-  }
-
-
-    /*
-
-    Function: getImage()
-    Purpose: returns the original bufferedImage that is currently in use.
-
-  */
-
-  public BufferedImage getImage() {
-    return bim;
-  }
-
-
-  public BufferedImage getFilteredImg(){ return filteredBim; }
-
-  public boolean getFiltered(){ return showFiltered; }
-
-
-    /*
-
     Function: showImage()
     Purpose: shows original image and repaints the current ImageComponent
 
@@ -181,16 +148,17 @@ public class ImageComponent extends JLabel {
     /*
 
     Function: paintComponent(Graphics g)
-    Purpose: overrides the paint component to show either the filtered BufferImage or BufferedImage
+    Purpose: overrides the paint component to show either the filtered BufferImage or original BufferedImage
+             and will also draw it to the dimensions of the component's current size to allow for easy resizing
 
   */
 
   public void paintComponent(Graphics g) {
     Graphics2D big = (Graphics2D) g;
     if (showFiltered)
-      big.drawImage(filteredBim, 0, 0, this);
+      big.drawImage(filteredBim, 0, 0, this.getWidth(), this.getHeight() - 50,this);
     else
-      big.drawImage(bim, 0, 0, this);
+      big.drawImage(bim, 0, 0, this.getWidth(), this.getHeight() - 50, this);
   }
 
 
@@ -204,13 +172,16 @@ public class ImageComponent extends JLabel {
 
   public void BlurImage() {
     if (bim == null) return;
+
+
     Kernel kernel = new Kernel(5, 5, kernelChoice);
     ConvolveOp cop = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
 
     // make a copy of the buffered image
-    BufferedImage newbim = new BufferedImage(bim.getWidth(), bim.getHeight(), BufferedImage.TYPE_INT_RGB);
+    BufferedImage newbim = new BufferedImage(bim.getWidth(), bim.getHeight(), BufferedImage.TYPE_INT_ARGB);
     Graphics2D big = newbim.createGraphics();
-    big.drawImage(bim, 0, 0, null);
+    big.drawImage(bim, 0, 0,null);
+    big.dispose();
 
     // apply the filter the copied image
     // result goes to a filtered copy
@@ -219,24 +190,5 @@ public class ImageComponent extends JLabel {
     showFiltered = true;
     this.repaint();
   }
-
-  public void resizetoCanvas(BufferedImage img, int newW, int newH) {
-    Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
-    BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
-
-    Graphics2D g2d = dimg.createGraphics();
-    g2d.drawImage(tmp, 0, 0, null);
-    g2d.dispose();
-
-    if(showFiltered){
-      filteredBim = dimg;
-    }else {
-      bim = dimg;
-    }
-
-    this.repaint();
-  }
-
-
 
 }

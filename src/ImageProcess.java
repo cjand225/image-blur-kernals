@@ -17,13 +17,14 @@ public class ImageProcess {
 
   private static String TITLE_TEXT = "Gaussian Blur ";
   private static String DEFAULT_IMAGE = "src/lake.jpeg";
+  private static int DEFAULT_WIDTH = 1280;
+  private static int DEFAULT_HEIGHT = 720;
 
-  private String fileName;
-
-  private JFrame iFrame;
-  private controlPanel cPanel;
-  private ImageComponent iCanvas;
-  private BufferedImage image;
+  private String fileName;        //filename used to keep track of the current file being worked on
+  private JFrame iFrame;          //overall JFrame that houses all other components
+  private controlPanel cPanel;    //Options pane that allows user control over image
+  private ImageComponent iCanvas; //Modified JLabel class for BufferedImages from class example
+  private BufferedImage image;    //used for loading new file
 
 
   /*
@@ -46,12 +47,14 @@ public class ImageProcess {
 
   private void initFrame(){
     iFrame = new JFrame(TITLE_TEXT +" - " + DEFAULT_IMAGE);
+    cPanel = new controlPanel();
+    iCanvas = new ImageComponent(readImage(DEFAULT_IMAGE));
     iFrame.setLayout(new BorderLayout());
 
-    iCanvas = new ImageComponent(readImage(DEFAULT_IMAGE));
-
-    cPanel = new controlPanel();
-    cPanel.setSize(new Dimension(iFrame.getWidth(), 100));
+    //set sizes
+    iFrame.setSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT));
+    cPanel.setPreferredSize(new Dimension(iFrame.getWidth(), 30));
+    iCanvas.setPreferredSize(new Dimension(iFrame.getWidth(), iFrame.getHeight() - cPanel.getHeight()));
 
     //bind options before adding to frame
     bindOptions();
@@ -97,9 +100,9 @@ public class ImageProcess {
           catch (IOException e1) { }
 
           iCanvas.setImage(image);
-
           iCanvas.showImage();
-          iFrame.pack();
+
+          //update title to reflect currrent file being worked on
           iFrame.setTitle(TITLE_TEXT + " - " +fileName);
         }
       }
@@ -113,7 +116,8 @@ public class ImageProcess {
       public void actionPerformed(ActionEvent e) {
         iCanvas.setKernel(cPanel.getBlurAmount());
         iCanvas.BlurImage();
-        iCanvas.resizetoCanvas(iCanvas.getFilteredImg(), iFrame.getWidth(), iFrame.getHeight() + 35);
+
+
       }
     });
 
@@ -121,25 +125,9 @@ public class ImageProcess {
     cPanel.getResetButton().addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        iCanvas.revert();
+        iCanvas.showImage();
       }
     });
-
-
-    iFrame.addComponentListener(new ComponentAdapter() {
-      @Override
-      public void componentResized(ComponentEvent e) {
-        super.componentResized(e);
-        if(iCanvas.getFiltered()) {
-          iCanvas.resizetoCanvas(iCanvas.getFilteredImg(), iFrame.getWidth(), iFrame.getHeight() + 35);
-        }else{
-          iCanvas.resizetoCanvas(iCanvas.getImage(), iFrame.getWidth(), iFrame.getHeight() + 35);
-        }
-
-      }
-    });
-
-
   }
 
   /*
@@ -159,12 +147,13 @@ public class ImageProcess {
     try { tracker.waitForID(0); }
     catch (InterruptedException e) { }
 
-    BufferedImage bim = new BufferedImage(image.getWidth(iFrame), image.getHeight(iFrame), BufferedImage.TYPE_INT_RGB);
+    BufferedImage bim = new BufferedImage(image.getWidth(iCanvas), image.getHeight(iCanvas), BufferedImage.TYPE_INT_RGB);
 
     Graphics2D big = bim.createGraphics();
-    big.drawImage(image, 0, 0, iFrame);
+    big.drawImage(image, 0, 0, iCanvas);
     return bim;
   }
+
 
 
   public static void main(String[] args) {
